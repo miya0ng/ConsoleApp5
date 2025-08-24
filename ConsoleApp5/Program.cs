@@ -29,7 +29,7 @@ while (open)
 
     Map map = new Map(10, 7);
     Goal goal = new Goal();
-    Player player = new Player(goal);
+    Player player = new Player((4,3));
     Box box = new Box(player, (3,2));
     Box box2 = new Box(player, (3,4));
 

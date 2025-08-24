@@ -9,11 +9,11 @@ public class Goal
 
     public void Init()
     {
-        GoalSpawn();
-        GoalSpawn();
+        GoalSpawn((5,2));
+        GoalSpawn((5,4));
     }
 
-    public void GoalSpawn()
+    public void GoalSpawn((int x, int y) pos)
     {
         int GoalX = random.Next(1, Map.Instance.col - 1);
         int GoalY = random.Next(1, Map.Instance.row - 1);

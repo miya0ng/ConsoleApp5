@@ -14,24 +14,24 @@ public class Box
     private bool isGoal = false;
     private bool isPushed = false;
 
-    private (int x, int y) prevBoxPos;
+    public (int x, int y) prevBoxPos;
     private (int dx, int dy) dir;
     public Box(Player player, (int x, int y) boxPos)
     {
         this.player = player;
         prevBoxPos = boxPos;
-        BoxSpawn(prevBoxPos);
+        //BoxSpawn(prevBoxPos);
     }
 
-    public void BoxSpawn((int x, int y) boxPos)
+    public void BoxSpawn()
     {
-        int BoxX = boxPos.x;
-        int BoxY = boxPos.y;
 
-        if (Map.mapInfos[BoxY, BoxX] == MapInfo.Blank)
+        if (Map.mapInfos[prevBoxPos.y, prevBoxPos.x] == MapInfo.Blank)
         {
-            Map.Instance.map[BoxY, BoxX] = '□';
-            Map.mapInfos[BoxY, BoxX] = Map.MapInfo.Goal;
+            Console.SetCursorPosition(prevBoxPos.x, prevBoxPos.y);
+            Console.Write("□");
+            Map.Instance.map[prevBoxPos.y, prevBoxPos.x] = '□';
+            //Map.mapInfos[prevBoxPos.y, prevBoxPos.x] = Map.MapInfo.Goal;
         }
     }
 
@@ -49,30 +49,39 @@ public class Box
             isPushed = true;
         }
 
-        var nextPos = (prevBoxPos.x + dir.dx, prevBoxPos.y + dir.dy);
+        //var nextPos = prevBoxPos;
+        //if(dir.dx != 0 || dir.dy != 0)
+        //var nextPos = (prevBoxPos.x + dir.dx, prevBoxPos.y + dir.dy);
 
         if (isPushed)
         {
+            var nextPos = (prevBoxPos.x + dir.dx, prevBoxPos.y + dir.dy);
             Move(nextPos);
             isPushed = false;
         }
     }
     private void Move((int x, int y) pos)
     {
-        prevBoxPos = pos;
+        if (Map.mapInfos[pos.y, pos.x] == Map.MapInfo.Wall)
+        {
+            return;
+        }
 
+        prevBoxPos = pos;
         Map.Instance.map[prevBoxPos.y, prevBoxPos.x] = '□';
         Map.mapInfos[prevBoxPos.y, prevBoxPos.x] = Map.MapInfo.Box;
     }
 
     private bool CheckCollisionWithPlayer()
     {
-        return true;
+        return Map.mapInfos[prevBoxPos.y, prevBoxPos.x] == Map.MapInfo.Player;
     }
     private bool CheckCollisionWithGoal()
     {
-        if (Map.mapInfos[prevBoxPos.y, prevBoxPos.x] == Map.MapInfo.Goal)
+        var dir = player.dir;
+        if (Map.mapInfos[prevBoxPos.y + dir.dy, prevBoxPos.x + dir.dx] == Map.MapInfo.Goal)
         {
+            prevBoxPos = (prevBoxPos.x + dir.dx, prevBoxPos.y + dir.dy);
             Map.mapInfos[prevBoxPos.y, prevBoxPos.x] = MapInfo.Dollar;
             return true;
         }
@@ -85,10 +94,10 @@ public class Box
             Console.SetCursorPosition(prevBoxPos.x, prevBoxPos.y);
             Console.Write("□");
         }
-        //else
-        //{
-        //    Console.SetCursorPosition(prevBoxPos.x, prevBoxPos.y);
-        //    Console.Write("$");
-        //}
+        else
+        {
+            Console.SetCursorPosition(prevBoxPos.x, prevBoxPos.y);
+            Console.Write("$");
+        }
     }
 }
